@@ -22,8 +22,7 @@ public record CreateEventDto(
         String category,
         Long organizerId
 ) {
-    static Event event=new Event();
-    public Event toEvent(){
-        return new Event(title,description,date,time,location,maxParticipants,category,event.getOrganizer().getId());
+    public Event toEvent(User organizer){
+        return new Event(title,description,date,time,location,maxParticipants,category,organizer);
     }
 }

@@ -1,9 +1,11 @@
 package mk.ukim.finki.kiii.volunteerapp.service.application.impl;
 
+import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayEventDto;
 import mk.ukim.finki.kiii.volunteerapp.service.application.EventApplicationService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
+import mk.ukim.finki.kiii.volunteerapp.service.domain.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class EventApplicationServiceImpl implements EventApplicationService {
 
     private final EventService eventService;
+    private final UserService userService;
 
-    public EventApplicationServiceImpl(EventService eventService) {
+    public EventApplicationServiceImpl(EventService eventService, UserService userService) {
         this.eventService = eventService;
+        this.userService = userService;
     }
 
     @Override
@@ -30,12 +34,18 @@ public class EventApplicationServiceImpl implements EventApplicationService {
 
     @Override
     public DisplayEventDto save(CreateEventDto createEventDto) {
-        return DisplayEventDto.from(eventService.save(createEventDto.toEvent(), createEventDto));
+        User organizer = userService.findById(createEventDto.organizerId())
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+
+        return DisplayEventDto.from(eventService.save(createEventDto.toEvent(organizer), createEventDto));
     }
 
     @Override
     public Optional<DisplayEventDto> update(Long id, CreateEventDto createEventDto) {
-        return eventService.update(id, createEventDto.toEvent()).map(DisplayEventDto::from);
+        User organizer = userService.findById(createEventDto.organizerId())
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+
+        return eventService.update(id, createEventDto.toEvent(organizer)).map(DisplayEventDto::from);
     }
 
     @Override
