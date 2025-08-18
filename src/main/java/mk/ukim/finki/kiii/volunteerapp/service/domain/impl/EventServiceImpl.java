@@ -8,6 +8,7 @@ import mk.ukim.finki.kiii.volunteerapp.repository.UserRepository;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +38,7 @@ public class EventServiceImpl implements EventService {
         User organizer = userRepository.findById(createEventDto.organizerId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Event event1 = new Event(event.getTitle(), event.getDescription(), event.getDate(), event.getTime(), event.getLocation(), event.getMaxParticipants(),event.getCategory(), organizer);
+        event1.setCreatedAt(LocalDateTime.now());
         return eventRepository.save(event1);
     }
 

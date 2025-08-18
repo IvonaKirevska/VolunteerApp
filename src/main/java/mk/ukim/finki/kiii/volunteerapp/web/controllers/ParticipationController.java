@@ -2,11 +2,13 @@ package mk.ukim.finki.kiii.volunteerapp.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateParticipationDto;
-import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateUserDto;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayParticipationDto;
-import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayUserDto;
 import mk.ukim.finki.kiii.volunteerapp.service.application.ParticipationApplicationService;
+import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
+import mk.ukim.finki.kiii.volunteerapp.service.domain.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +20,13 @@ import java.util.List;
 public class ParticipationController {
 
     private final ParticipationApplicationService participationApplicationService;
+    private final UserService userService;
+    private final EventService eventService;
 
-    public ParticipationController(ParticipationApplicationService participationApplicationService) {
+    public ParticipationController(ParticipationApplicationService participationApplicationService, UserService userService, EventService eventService) {
         this.participationApplicationService = participationApplicationService;
+        this.userService = userService;
+        this.eventService = eventService;
     }
 
     @Operation(summary = "Get all participations", description = "Retrieves a list of all available participations.")
@@ -38,27 +44,25 @@ public class ParticipationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Add a new participation", description = "Creates a new participation based on the given ParticipationDto.")
-    @PostMapping("/add")
-    public ResponseEntity<DisplayParticipationDto> save(@RequestBody CreateParticipationDto createParticipationDto) {
-        return ResponseEntity.ok(participationApplicationService.save(createParticipationDto));
+    @PostMapping("/join")
+    public ResponseEntity<Participation> joinEvent(@RequestParam Long userId, @RequestParam Long eventId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Event event = eventService.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        Participation participation = participationApplicationService.joinEvent(user, event);
+        return ResponseEntity.ok(participation);
     }
 
-    @Operation(summary = "Update an existing participation", description = "Updates an participation by its ID.")
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<DisplayParticipationDto> update(@PathVariable Long id, @RequestBody CreateParticipationDto createParticipationDto) {
-        return this.participationApplicationService.update(id, createParticipationDto)
-                .map(a -> ResponseEntity.ok().body(a))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+    @DeleteMapping("/leave")
+    public ResponseEntity<Void> leaveEvent(@RequestParam Long userId, @RequestParam Long eventId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Event event = eventService.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
 
-    @Operation(summary = "Delete an participation", description = "Deletes an participation by its ID.")
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (participationApplicationService.findById(id).isPresent()) {
-            participationApplicationService.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        participationApplicationService.leaveEvent(user, event);
+        return ResponseEntity.ok().build();
     }
 }

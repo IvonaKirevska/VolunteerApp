@@ -1,5 +1,8 @@
 package mk.ukim.finki.kiii.volunteerapp.service.application;
 
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateParticipationDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateUserDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayParticipationDto;
@@ -14,4 +17,6 @@ public interface ParticipationApplicationService {
     DisplayParticipationDto save(CreateParticipationDto createParticipationDto);
     Optional<DisplayParticipationDto> update(Long id, CreateParticipationDto createParticipationDto);
     void deleteById(Long id);
+    Participation joinEvent(User user, Event event);
+    void leaveEvent(User user, Event event);
 }
