@@ -2,8 +2,7 @@ package mk.ukim.finki.kiii.volunteerapp.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateUserDto;
-import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayUserDto;
+import mk.ukim.finki.kiii.volunteerapp.model.dto.*;
 import mk.ukim.finki.kiii.volunteerapp.service.application.UserApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,4 +58,19 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<RegisterUserResponseDto> register(@RequestBody RegisterUserRequestDto registerUserRequestDto){
+        return userApplicationService
+                .register(registerUserRequestDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginUserResponseDto> login(@RequestBody LoginUserRequestDto loginUserRequestDto){
+        return userApplicationService
+                .login(loginUserRequestDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.badRequest().build());
+    }
 }
