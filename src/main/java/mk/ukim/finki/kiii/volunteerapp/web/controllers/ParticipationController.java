@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
+import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateParticipationDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayParticipationDto;
 import mk.ukim.finki.kiii.volunteerapp.service.application.ParticipationApplicationService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
@@ -45,13 +46,8 @@ public class ParticipationController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Participation> joinEvent(@RequestParam Long userId, @RequestParam Long eventId) {
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Event event = eventService.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-        Participation participation = participationApplicationService.joinEvent(user, event);
+    public ResponseEntity<Participation> joinEvent(@RequestBody CreateParticipationDto createParticipationDto) {
+        Participation participation = participationApplicationService.joinEvent(createParticipationDto);
         return ResponseEntity.ok(participation);
     }
 

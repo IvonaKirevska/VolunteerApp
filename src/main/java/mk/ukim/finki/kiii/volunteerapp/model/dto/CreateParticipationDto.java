@@ -4,8 +4,8 @@ import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 
-public record CreateParticipationDto(User userId, Event eventId) {
-    public Participation toParticipation(){
-        return new Participation(userId, eventId);
+public record CreateParticipationDto(Long userId, Long eventId) {
+    public Participation toParticipation(User user, Event event){
+        return new Participation(user, event);
     }
 }

@@ -17,6 +17,7 @@ public interface ParticipationApplicationService {
     DisplayParticipationDto save(CreateParticipationDto createParticipationDto);
     Optional<DisplayParticipationDto> update(Long id, CreateParticipationDto createParticipationDto);
     void deleteById(Long id);
-    Participation joinEvent(User user, Event event);
+    //Participation joinEvent(User user, Event event);
+    Participation joinEvent(CreateParticipationDto createParticipationDto);
     void leaveEvent(User user, Event event);
 }

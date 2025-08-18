@@ -1,5 +1,7 @@
 package mk.ukim.finki.kiii.volunteerapp.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +20,10 @@ public class Participation {
     private Long id;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
     @ManyToOne
+    @JsonIgnore
     private Event event;
     private LocalDateTime joinedAt;
 
