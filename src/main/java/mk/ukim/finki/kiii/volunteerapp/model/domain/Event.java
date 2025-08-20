@@ -30,7 +30,7 @@ public class Event {
     private LocalDateTime createdAt;
     @ManyToOne
     private User organizer;
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participations;
 
     public Event(String title, String description, LocalDate date, LocalTime time, String location, Integer maxParticipants, String category, User organizerId) {

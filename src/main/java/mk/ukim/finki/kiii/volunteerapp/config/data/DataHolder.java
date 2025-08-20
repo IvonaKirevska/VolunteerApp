@@ -9,6 +9,7 @@ import mk.ukim.finki.kiii.volunteerapp.repository.EventRepository;
 import mk.ukim.finki.kiii.volunteerapp.repository.ParticipationRepository;
 import mk.ukim.finki.kiii.volunteerapp.repository.UserRepository;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -22,15 +23,16 @@ public class DataHolder {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final ParticipationRepository participationRepository;
-    //private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     public DataHolder(UserRepository userRepository,
                            EventRepository eventRepository,
-                           ParticipationRepository participationRepository) {
+                           ParticipationRepository participationRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.participationRepository = participationRepository;
-        //this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -41,10 +43,10 @@ public class DataHolder {
 
         // Креираме организатор и волонтер корисници
         User organizer = new User(null, "Ivan Organizer", "organizer@example.com",
-                "password1", Role.ORGANIZER, LocalDateTime.now(), null, null);
+                passwordEncoder.encode("password1"), null, null);
 
         User volunteer = new User(null, "Petar Volunteer", "volunteer@example.com",
-                "password2", Role.VOLUNTEER, LocalDateTime.now(), null, null);
+                passwordEncoder.encode("password2"),  null, null);
 
         userRepository.saveAll(List.of(organizer, volunteer));
 
@@ -64,7 +66,7 @@ public class DataHolder {
         eventRepository.save(event);
 
         // Креираме пријавување (Participation)
-        Participation participation = new Participation(null, volunteer, event, LocalDateTime.now());
+        Participation participation = new Participation(null, volunteer, event, Role.VOLUNTEER, LocalDateTime.now() );
 
         participationRepository.save(participation);
     }

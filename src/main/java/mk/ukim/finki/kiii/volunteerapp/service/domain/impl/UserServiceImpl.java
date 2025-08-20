@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        if (user.getUsername()==null || user.getUsername().isEmpty() || user.getEmail()==null || user.getEmail().isEmpty() || user.getPassword()==null || user.getPassword().isEmpty() || user.getRole()==null){
+        if (user.getUsername()==null || user.getUsername().isEmpty() || user.getEmail()==null || user.getEmail().isEmpty() || user.getPassword()==null || user.getPassword().isEmpty()){
             throw new IllegalArgumentException();
         }
-        User user1 = new User(user.getUsername(), user.getEmail(), user.getPassword(), user.getRole());
+        User user1 = new User(user.getUsername(), user.getEmail(), user.getPassword());
         return this.userRepository.save(user1);
     }
 
@@ -54,9 +54,6 @@ public class UserServiceImpl implements UserService {
                     if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                         existingUser.setPassword(user.getPassword());
                     }
-                    if (user.getRole() !=null){
-                        existingUser.setRole(user.getRole());
-                    }
                     return userRepository.save(existingUser);
                 });
     }
@@ -70,8 +67,8 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         return userRepository.save(new User(
                 user.getUsername(),
-                passwordEncoder.encode(user.getPassword()),
-                user.getEmail()
+                user.getEmail(),
+                passwordEncoder.encode(user.getPassword())
         ));
     }
 

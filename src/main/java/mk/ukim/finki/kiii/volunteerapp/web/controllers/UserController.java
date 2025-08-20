@@ -58,6 +58,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "Register new user")
     @PostMapping("/register")
     public ResponseEntity<RegisterUserResponseDto> register(@RequestBody RegisterUserRequestDto registerUserRequestDto){
         return userApplicationService
@@ -66,6 +67,7 @@ public class UserController {
                 .orElse(ResponseEntity.badRequest().build());
     }
 
+    @Operation(summary = "Log in")
     @PostMapping("/login")
     public ResponseEntity<LoginUserResponseDto> login(@RequestBody LoginUserRequestDto loginUserRequestDto){
         return userApplicationService

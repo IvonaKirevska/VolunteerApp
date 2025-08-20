@@ -45,12 +45,14 @@ public class ParticipationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Join on an existing event")
     @PostMapping("/join")
     public ResponseEntity<Participation> joinEvent(@RequestBody CreateParticipationDto createParticipationDto) {
         Participation participation = participationApplicationService.joinEvent(createParticipationDto);
         return ResponseEntity.ok(participation);
     }
 
+    @Operation(summary = "Leave an event")
     @DeleteMapping("/leave")
     public ResponseEntity<Void> leaveEvent(@RequestParam Long userId, @RequestParam Long eventId) {
         User user = userService.findById(userId)

@@ -2,10 +2,14 @@ package mk.ukim.finki.kiii.volunteerapp.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayEventDto;
+import mk.ukim.finki.kiii.volunteerapp.model.exceptions.AccessDeniedException;
 import mk.ukim.finki.kiii.volunteerapp.service.application.EventApplicationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,9 +54,9 @@ public class EventController {
 
     @Operation(summary = "Delete an event", description = "Deletes an event by its ID.")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal User currentUser) throws AccessDeniedException {
         if (eventApplicationService.findById(id).isPresent()) {
-            eventApplicationService.deleteById(id);
+            eventApplicationService.deleteById(id, currentUser.getId());
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();

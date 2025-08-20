@@ -1,9 +1,15 @@
 package mk.ukim.finki.kiii.volunteerapp.service.domain.impl;
 
+import jakarta.transaction.Transactional;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
+import mk.ukim.finki.kiii.volunteerapp.model.enumerations.Role;
+import mk.ukim.finki.kiii.volunteerapp.model.exceptions.AccessDeniedException;
+import mk.ukim.finki.kiii.volunteerapp.model.exceptions.ParticipationNotFoundException;
 import mk.ukim.finki.kiii.volunteerapp.repository.EventRepository;
+import mk.ukim.finki.kiii.volunteerapp.repository.ParticipationRepository;
 import mk.ukim.finki.kiii.volunteerapp.repository.UserRepository;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
 import org.springframework.stereotype.Service;
@@ -17,10 +23,12 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final ParticipationRepository participationRepository;
 
-    public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository) {
+    public EventServiceImpl(EventRepository eventRepository, UserRepository userRepository, ParticipationRepository participationRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.participationRepository = participationRepository;
     }
 
     @Override
@@ -39,6 +47,18 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Event event1 = new Event(event.getTitle(), event.getDescription(), event.getDate(), event.getTime(), event.getLocation(), event.getMaxParticipants(),event.getCategory(), organizer);
         event1.setCreatedAt(LocalDateTime.now());
+
+        Event savedEvent = eventRepository.save(event1);
+
+        Participation participation = new Participation(
+                organizer,
+                savedEvent,
+                Role.ORGANIZER ,  // или ако имаш enum Role.ORGANIZER
+                LocalDateTime.now()
+        );
+
+        // Сними го учеството
+        participationRepository.save(participation);
         return eventRepository.save(event1);
     }
 
@@ -75,7 +95,18 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id, Long requestingUserId) throws AccessDeniedException {
+//        Participation participation = participationRepository
+//                .findByUserAndEvent(id, requestingUserId)
+//                .orElseThrow(() -> new ParticipationNotFoundException(id));
+        Participation participation = participationRepository
+                .findByEventAndUser(id, requestingUserId)
+                .orElseThrow(()-> new RuntimeException("Participation not found"));
+
+        if (participation.getRole()!=Role.ORGANIZER){
+            throw new AccessDeniedException();
+        }
         eventRepository.deleteById(id);
     }
+
 }

@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,25 +25,15 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    private LocalDateTime createdAt;
     @OneToMany(mappedBy = "organizer")
     private List<Event> events;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participation> participations;
 
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password) {
         this.username =name;
         this.email=email;
         this.password=password;
-        this.role=role;
-    }
-
-    public User(String username, String password, String email) {
-        this.username =username;
-        this.password=password;
-        this.email=email;
     }
 
     @Override

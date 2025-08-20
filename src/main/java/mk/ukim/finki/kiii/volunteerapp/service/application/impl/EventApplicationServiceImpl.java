@@ -1,10 +1,9 @@
 package mk.ukim.finki.kiii.volunteerapp.service.application.impl;
 
-import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
-import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayEventDto;
+import mk.ukim.finki.kiii.volunteerapp.model.exceptions.AccessDeniedException;
 import mk.ukim.finki.kiii.volunteerapp.service.application.EventApplicationService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.UserService;
@@ -51,8 +50,8 @@ public class EventApplicationServiceImpl implements EventApplicationService {
     }
 
     @Override
-    public void deleteById(Long id) {
-        eventService.deleteById(id);
+    public void deleteById(Long id, Long requestingUserId) throws AccessDeniedException {
+        eventService.deleteById(id, requestingUserId);
     }
 
 }

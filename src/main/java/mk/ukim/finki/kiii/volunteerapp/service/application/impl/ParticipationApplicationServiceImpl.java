@@ -5,6 +5,7 @@ import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateParticipationDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayParticipationDto;
+import mk.ukim.finki.kiii.volunteerapp.model.enumerations.Role;
 import mk.ukim.finki.kiii.volunteerapp.repository.ParticipationRepository;
 import mk.ukim.finki.kiii.volunteerapp.service.application.ParticipationApplicationService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
@@ -42,47 +43,6 @@ public class ParticipationApplicationServiceImpl implements ParticipationApplica
     }
 
     @Override
-    public DisplayParticipationDto save(CreateParticipationDto createParticipationDto) {
-        User user = userService.findById(createParticipationDto.userId())
-                .orElseThrow(() -> new RuntimeException("Organizer not found"));
-
-        Event event = eventService.findById(createParticipationDto.eventId())
-                .orElseThrow(()-> new RuntimeException("Event not found"));
-
-        return DisplayParticipationDto.from(participationService.save(createParticipationDto.toParticipation(user, event)));
-    }
-
-    @Override
-    public Optional<DisplayParticipationDto> update(Long id, CreateParticipationDto createParticipationDto) {
-        User user = userService.findById(createParticipationDto.userId())
-                .orElseThrow(() -> new RuntimeException("Organizer not found"));
-
-        Event event = eventService.findById(createParticipationDto.eventId())
-                .orElseThrow(()-> new RuntimeException("Event not found"));
-
-        return participationService.update(id, createParticipationDto.toParticipation(user, event)).map(DisplayParticipationDto::from);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        participationService.deleteById(id);
-    }
-
-//    @Override
-//    public Participation joinEvent(User user, Event event) {
-//        Optional<Participation> existing=participationRepository.findByUserAndEvent(user, event);
-//        if (existing.isPresent()){
-//            throw new RuntimeException("User already joined this event");
-//        }
-//
-//        Participation participation=new Participation();
-//        participation.setUser(user);
-//        participation.setEvent(event);
-//        participation.setJoinedAt(LocalDateTime.now());
-//        return participationRepository.save(participation);
-//    }
-
-    @Override
     public Participation joinEvent(CreateParticipationDto createParticipationDto) {
         User user = userService.findById(createParticipationDto.userId())
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
@@ -91,7 +51,7 @@ public class ParticipationApplicationServiceImpl implements ParticipationApplica
                 .orElseThrow(()-> new RuntimeException("Event not found"));
 
 
-        Optional<Participation> existing=participationRepository.findByUserAndEvent(user, event);
+        Optional<Participation> existing=participationRepository.findByEventAndUser(event.getId(), user.getId());
         if (existing.isPresent()){
             throw new RuntimeException("User already joined this event");
         }
@@ -100,12 +60,13 @@ public class ParticipationApplicationServiceImpl implements ParticipationApplica
         participation.setUser(user);
         participation.setEvent(event);
         participation.setJoinedAt(LocalDateTime.now());
+        participation.setRole(Role.valueOf("VOLUNTEER"));
         return participationRepository.save(participation);
     }
 
     @Override
     public void leaveEvent(User user, Event event) {
-        Optional<Participation> participation=participationRepository.findByUserAndEvent(user, event);
+        Optional<Participation> participation=participationRepository.findByEventAndUser(event.getId(), user.getId());
         participation.ifPresent(participationRepository::delete);
     }
 }
