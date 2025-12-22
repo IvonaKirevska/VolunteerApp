@@ -14,6 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
@@ -32,8 +34,9 @@ public class JwtSecurityWebConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setExposedHeaders(List.of("Content-Range"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
@@ -54,11 +57,14 @@ public class JwtSecurityWebConfig {
                         authorizeHttpRequestsCustomizer
                                 .requestMatchers(
                                         "/swagger-ui/**",
+                                        "/swagger-ui.html",
                                         "/v3/api-docs/**",
+                                        "/v3/api-docs",
                                         "/h2/**",
                                         "/api/user/register",
                                         "/api/user/login",
-                                        "/api/user"
+                                        "/api/user",
+                                        "/api/events"
                                 )
                                 .permitAll()
                                 .anyRequest()

@@ -2,12 +2,15 @@ package mk.ukim.finki.kiii.volunteerapp.web.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.Participation;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.exceptions.AccessDeniedException;
 import mk.ukim.finki.kiii.volunteerapp.service.application.EventApplicationService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +30,11 @@ public class EventController {
     @Operation(summary = "Get all events", description = "Retrieves a list of all available events.")
     @GetMapping
     public List<DisplayEventDto> findAll(){
-        return eventApplicationService.findAll();
+        List<DisplayEventDto> events = eventApplicationService.findAll();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Access-Control-Expose-Headers", "Content-Range");
+        headers.add("Content-Range", "events 0-" + (events.size() - 1) + "/" + events.size());
+        return new ResponseEntity<>(events, headers, HttpStatus.OK).getBody();
     }
 
     @Operation(summary = "Get event by ID", description = "Finds an event by its ID.")
