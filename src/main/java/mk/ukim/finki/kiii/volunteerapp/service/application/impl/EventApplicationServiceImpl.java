@@ -1,5 +1,6 @@
 package mk.ukim.finki.kiii.volunteerapp.service.application.impl;
 
+import mk.ukim.finki.kiii.volunteerapp.model.domain.Event;
 import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.CreateEventDto;
 import mk.ukim.finki.kiii.volunteerapp.model.dto.DisplayEventDto;
@@ -7,6 +8,8 @@ import mk.ukim.finki.kiii.volunteerapp.model.exceptions.AccessDeniedException;
 import mk.ukim.finki.kiii.volunteerapp.service.application.EventApplicationService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.UserService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,17 +38,26 @@ public class EventApplicationServiceImpl implements EventApplicationService {
 
     @Override
     public DisplayEventDto save(CreateEventDto createEventDto) {
-        User organizer = userService.findById(createEventDto.organizerId())
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        User organizer = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
 
-        return DisplayEventDto.from(eventService.save(createEventDto.toEvent(organizer), createEventDto));
-    }
+        Event event = createEventDto.toEvent(organizer);
+
+        Event savedEvent = eventService.save(event, organizer);
+
+        return DisplayEventDto.from(savedEvent);    }
 
     @Override
     public Optional<DisplayEventDto> update(Long id, CreateEventDto createEventDto) {
-        User organizer = userService.findById(createEventDto.organizerId())
-                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
 
+        User organizer = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
         return eventService.update(id, createEventDto.toEvent(organizer)).map(DisplayEventDto::from);
     }
 

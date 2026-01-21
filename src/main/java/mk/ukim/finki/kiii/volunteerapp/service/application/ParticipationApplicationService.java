@@ -14,6 +14,7 @@ import java.util.Optional;
 public interface ParticipationApplicationService {
     List<DisplayParticipationDto> findAll();
     Optional<DisplayParticipationDto> findById(Long id);
-    Participation joinEvent(CreateParticipationDto createParticipationDto);
+    Participation joinEvent(Long eventId);
     void leaveEvent(User user, Event event);
+    List<Participation> findByEventId(Long eventId);
 }

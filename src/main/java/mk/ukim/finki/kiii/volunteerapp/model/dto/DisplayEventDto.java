@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record DisplayEventDto(Long id, String title, String description, LocalDate date, LocalTime time, String location, Integer maxParticipants, String category, LocalDateTime createdAt, Long organizer) {
+public record DisplayEventDto(Long id, String title, String description, LocalDate date, LocalTime time, String location, Integer maxParticipants, String category, LocalDateTime createdAt, String organizerName) {
     public static DisplayEventDto from(Event event){
         return new DisplayEventDto(
                 event.getId(),
@@ -20,7 +20,7 @@ public record DisplayEventDto(Long id, String title, String description, LocalDa
                 event.getMaxParticipants(),
                 event.getCategory(),
                 event.getCreatedAt(),
-                event.getOrganizer().getId()
+                event.getOrganizer().getUsername()
         );
     }
 

@@ -19,10 +19,10 @@ public record CreateEventDto(
                 LocalTime time,
         String location,
         Integer maxParticipants,
-        String category,
-        Long organizerId
+        String category
+        //Long organizerId
 ) {
     public Event toEvent(User organizer){
-        return new Event(title,description,date,time,location,maxParticipants,category,organizer);
+        return new Event(title,description,date,time,location,maxParticipants,category, organizer);
     }
 }

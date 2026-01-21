@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/participations")
@@ -46,10 +47,10 @@ public class ParticipationController {
     }
 
     @Operation(summary = "Join on an existing event")
-    @PostMapping("/join")
-    public ResponseEntity<Participation> joinEvent(@RequestBody CreateParticipationDto createParticipationDto) {
-        Participation participation = participationApplicationService.joinEvent(createParticipationDto);
-        return ResponseEntity.ok(participation);
+    @PostMapping("/{id}/join")
+    public ResponseEntity<String> joinEvent(@PathVariable Long id) {
+        participationApplicationService.joinEvent(id);
+        return ResponseEntity.ok("ok");
     }
 
     @Operation(summary = "Leave an event")
@@ -62,5 +63,16 @@ public class ParticipationController {
 
         participationApplicationService.leaveEvent(user, event);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/participants")
+    public ResponseEntity<List<String>> getParticipants(@PathVariable Long id){
+        List<Participation> participations = participationApplicationService.findByEventId(id);
+
+        List<String> participantNames = participations.stream()
+                .map(p->p.getUser().getUsername())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(participantNames);
     }
 }

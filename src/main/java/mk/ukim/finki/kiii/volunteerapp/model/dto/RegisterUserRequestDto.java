@@ -4,10 +4,10 @@ import mk.ukim.finki.kiii.volunteerapp.model.domain.User;
 
 public record RegisterUserRequestDto(
         String username,
-        String password,
-        String email
+        String email,
+        String password
 ) {
     public User toUser(){
-        return new User(username, password, email);
+        return new User(username, email, password);
     }
 }

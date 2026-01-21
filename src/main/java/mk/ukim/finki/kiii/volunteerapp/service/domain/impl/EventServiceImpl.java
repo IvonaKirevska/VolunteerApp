@@ -42,24 +42,31 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event save(Event event, CreateEventDto createEventDto) {
-        User organizer = userRepository.findById(createEventDto.organizerId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Event event1 = new Event(event.getTitle(), event.getDescription(), event.getDate(), event.getTime(), event.getLocation(), event.getMaxParticipants(),event.getCategory(), organizer);
-        event1.setCreatedAt(LocalDateTime.now());
+    public Event save(Event event, User organizer) {
+        Event eventToSave = new Event(
+                event.getTitle(),
+                event.getDescription(),
+                event.getDate(),
+                event.getTime(),
+                event.getLocation(),
+                event.getMaxParticipants(),
+                event.getCategory(),
+                organizer
+        );
 
-        Event savedEvent = eventRepository.save(event1);
+        eventToSave.setCreatedAt(LocalDateTime.now());
+
+        Event savedEvent = eventRepository.save(eventToSave);
 
         Participation participation = new Participation(
                 organizer,
                 savedEvent,
-                Role.ORGANIZER ,  // или ако имаш enum Role.ORGANIZER
+                Role.ORGANIZER ,
                 LocalDateTime.now()
         );
 
-        // Сними го учеството
         participationRepository.save(participation);
-        return eventRepository.save(event1);
+        return savedEvent;
     }
 
     @Override
@@ -85,9 +92,6 @@ public class EventServiceImpl implements EventService {
                         existingEvent.setMaxParticipants(event.getMaxParticipants());
                     }
                     if (event.getCategory()!=null && !event.getCategory().isEmpty()){
-                        existingEvent.setCategory(event.getCategory());
-                    }
-                    if (event.getOrganizer()!=null){
                         existingEvent.setCategory(event.getCategory());
                     }
                     return eventRepository.save(existingEvent);
