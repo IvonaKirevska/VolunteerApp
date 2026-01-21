@@ -1,0 +1,61 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+
+    background-color: #1f2937;
+
+    display: flex;
+    align-items: center;          /* 🔑 ВЕРТИКАЛНО ЦЕНТРИРАЊЕ */
+    justify-content: space-between;
+
+    padding: 0 24px;              /* НЕ ставај padding-top */
+    box-sizing: border-box;
+
+    z-index: 1000;
+}
+
+.user-name {
+    margin-right: 20px;          /* растојание од линковите */
+    font-weight: bold;
+    font-size: 16px;
+    color: #fff;                 /* бела боја */
+}
+
+.logo{
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+.logout-btn {
+    background: #e74c3c;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+}

@@ -1,0 +1,81 @@
+/* Center the register form */
+.register-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background: #f0f4f8;
+    font-family: Arial, sans-serif;
+    border-radius: 10px;
+}
+
+/* Title */
+.register-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Form */
+.register-container form {
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+/* Inputs */
+.register-container input {
+    width: 90%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Button */
+.register-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background: #28a745;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.register-container button:hover {
+    background: #1e7e34;
+}
+
+/* Error message */
+.register-container .error {
+    color: #ff4d4f;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* Login link */
+.register-container p {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.register-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-container a:hover {
+    text-decoration: underline;
+}
+
+p{
+    color: #1a1a1a;
+}

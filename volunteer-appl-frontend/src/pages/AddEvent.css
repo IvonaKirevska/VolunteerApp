@@ -1,0 +1,51 @@
+.add-event-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.add-event-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.add-event-container form {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.add-event-container input,
+.add-event-container textarea {
+    margin-bottom: 15px;
+    padding: 10px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.add-event-container button {
+    padding: 12px;
+    border: none;
+    background: #28a745;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.add-event-container button:hover {
+    background: #1e7e34;
+}
+
+.add-event-container .error {
+    color: #ff4d4f;
+    margin-bottom: 10px;
+}
