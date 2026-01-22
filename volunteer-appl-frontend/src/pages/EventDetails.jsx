@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import {redirect, useParams} from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../axios/axios";
 import "./EventDetails.css";
@@ -9,6 +9,26 @@ export default function EventDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [participants, setParticipants] = useState([]);
+
+
+    const handleLeave = async (eventId) => {
+        if (!window.confirm("Are you sure you want to leave this event?")){
+            return;
+        }
+        try {
+            await api.delete(
+                `/participations/${eventId}/leave`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+            window.location.reload();
+        } catch (err) {
+            alert(err.response?.data || "Failed to leave");
+        }
+    };
 
     useEffect(() => {
         api.get(`/events/${id}`)
@@ -54,6 +74,7 @@ export default function EventDetails() {
                     ))}
                 </ul>
             )}
+            <button className="leave-btn" onClick={()=>handleLeave(event.id)}>Leave Event</button>
         </div>
 
     );

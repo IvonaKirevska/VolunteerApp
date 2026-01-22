@@ -11,6 +11,7 @@ import mk.ukim.finki.kiii.volunteerapp.service.application.ParticipationApplicat
 import mk.ukim.finki.kiii.volunteerapp.service.domain.EventService;
 import mk.ukim.finki.kiii.volunteerapp.service.domain.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,9 +55,12 @@ public class ParticipationController {
     }
 
     @Operation(summary = "Leave an event")
-    @DeleteMapping("/leave")
-    public ResponseEntity<Void> leaveEvent(@RequestParam Long userId, @RequestParam Long eventId) {
-        User user = userService.findById(userId)
+    @DeleteMapping("/{eventId}/leave")
+    public ResponseEntity<Void> leaveEvent(@PathVariable Long eventId, Authentication authentication) {
+
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Event event = eventService.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));

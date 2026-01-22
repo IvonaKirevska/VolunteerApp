@@ -37,3 +37,9 @@
 .event-details h2, ul{
     color: white;
 }
+
+.leave-btn{
+    background-color: darkred;
+    width: 100%;
+    margin-top: 15px;
+}

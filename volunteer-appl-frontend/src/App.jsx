@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar.jsx";
 import Register from "./pages/Register.jsx";
 import AddEvent from "./pages/AddEvent.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
+import PrivateRoute from "./PrivateRoute.jsx";
 
 function App() {
     return (
@@ -20,10 +21,10 @@ function App() {
                     <Route path="/test" element={<TestConnection/>}/>
                     <Route
                         path="/"
-                        element={<h1>Welcome to VolunteerApp Frontend</h1>}
+                        element={<h1>Welcome to Volunteer-Event App</h1>}
                     />
-                    <Route path="/events" element={<Events/>}/>
-                    <Route path="/add-event" element={<AddEvent/>}/>
+                    <Route path="/events" element={<PrivateRoute><Events/></PrivateRoute>}/>
+                    <Route path="/add-event" element={<PrivateRoute><AddEvent/></PrivateRoute>}/>
                     <Route path="/events/:id" element={<EventDetails />} />
                 </Routes>
         </Router>

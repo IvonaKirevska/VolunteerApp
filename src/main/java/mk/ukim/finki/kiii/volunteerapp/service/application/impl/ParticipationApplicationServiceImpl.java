@@ -56,6 +56,10 @@ public class ParticipationApplicationServiceImpl implements ParticipationApplica
         Event event = eventService.findById(eventId)
                 .orElseThrow(()->new RuntimeException("Event not found"));
 
+        if (event.getOrganizer().getId().equals(user.getId())){
+            throw new RuntimeException("Organizer cannot join their own event");
+        }
+
         Optional<Participation> existing = participationRepository.findByEventAndUser(event.getId(), user.getId());
         if (existing.isPresent()){
             throw new RuntimeException("User already joined this event");
@@ -72,8 +76,15 @@ public class ParticipationApplicationServiceImpl implements ParticipationApplica
 
     @Override
     public void leaveEvent(User user, Event event) {
-        Optional<Participation> participation=participationRepository.findByEventAndUser(event.getId(), user.getId());
-        participation.ifPresent(participationRepository::delete);
+        Participation participation = participationRepository
+                .findByEventAndUser(event.getId(), user.getId())
+                .orElseThrow(() -> new RuntimeException("User is not participating"));
+
+        if (participation.getRole()==Role.ORGANIZER){
+            throw new RuntimeException("Organizer cannot leave their own event");
+        }
+
+        participationRepository.delete(participation);
     }
 
     @Override
