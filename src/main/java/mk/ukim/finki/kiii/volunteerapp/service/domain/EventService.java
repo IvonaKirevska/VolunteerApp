@@ -13,6 +13,6 @@ public interface EventService {
     List<Event> findAll();
     Optional<Event> findById(Long id);
     Event save(Event event, User organizer);
-    Optional<Event> update(Long id, Event event);
+    Optional<Event> update(Long id, Event event,String username);
     void deleteById(Long id, Long requestingUserId) throws AccessDeniedException;
 }

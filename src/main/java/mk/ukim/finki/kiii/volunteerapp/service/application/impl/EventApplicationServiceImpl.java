@@ -58,7 +58,7 @@ public class EventApplicationServiceImpl implements EventApplicationService {
 
         User organizer = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
-        return eventService.update(id, createEventDto.toEvent(organizer)).map(DisplayEventDto::from);
+        return eventService.update(id, createEventDto.toEvent(organizer), organizer.getUsername()).map(DisplayEventDto::from);
     }
 
     @Override

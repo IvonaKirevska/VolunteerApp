@@ -1,18 +1,20 @@
-import {redirect, useParams} from "react-router-dom";
-import { useEffect, useState } from "react";
+import {Link, redirect, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import api from "../axios/axios";
 import "./EventDetails.css";
+import {useNavigate} from "react-router-dom";
 
 export default function EventDetails() {
-    const { id } = useParams();
+    const {id} = useParams();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [participants, setParticipants] = useState([]);
-
+    const loggedUser=localStorage.getItem("username");
+    const navigate = useNavigate();
 
     const handleLeave = async (eventId) => {
-        if (!window.confirm("Are you sure you want to leave this event?")){
+        if (!window.confirm("Are you sure you want to leave this event?")) {
             return;
         }
         try {
@@ -30,6 +32,22 @@ export default function EventDetails() {
         }
     };
 
+    const handleDelete=async (eventId) =>{
+        if (!window.confirm("Are you sure you want to delete this event?")) return;
+
+        try{
+            await api.delete(`events/delete/${eventId}`,{
+                headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}
+            })
+            alert("Event deleted successfully");
+            navigate("/events");
+        }catch (err){
+            console.error(err);
+            alert(err.response?.data || "Failed to delete event");
+        }
+    }
+
+
     useEffect(() => {
         api.get(`/events/${id}`)
             .then(res => {
@@ -44,7 +62,7 @@ export default function EventDetails() {
 
     useEffect(() => {
         api.get(`/participations/${id}/participants`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+            headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}
         })
             .then(res => setParticipants(res.data))
             .catch(err => console.log(err));
@@ -74,7 +92,21 @@ export default function EventDetails() {
                     ))}
                 </ul>
             )}
-            <button className="leave-btn" onClick={()=>handleLeave(event.id)}>Leave Event</button>
+
+
+            {!(event.organizerName === loggedUser)&&(
+            <button className="leave-btn" onClick={() => handleLeave(event.id)}>Leave Event</button>
+            )}
+            {event.organizerName ===loggedUser && (
+                <Link to={`/events/${event.id}/edit`}>
+                    <button className="edit-btn">Edit Event</button>
+                </Link>
+            )}
+
+            {event.organizerName===loggedUser&&(
+                <button className="delete-btn" onClick={() => handleDelete(event.id)}>Delete Event</button>
+            )}
+
         </div>
 
     );

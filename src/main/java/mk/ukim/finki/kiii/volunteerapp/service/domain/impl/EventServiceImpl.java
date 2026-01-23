@@ -70,9 +70,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Optional<Event> update(Long id, Event event) {
+    public Optional<Event> update(Long id, Event event, String username) {
         return eventRepository.findById(id)
                 .map(existingEvent -> {
+
+                    if(!existingEvent.getOrganizer().getUsername().equals(username)){
+                        throw new RuntimeException("You are not allowed to edit this event");
+                    }
+
                    if (event.getTitle()!=null && !event.getTitle().isEmpty()){
                        existingEvent.setTitle(event.getTitle());
                    }
@@ -100,17 +105,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void deleteById(Long id, Long requestingUserId) throws AccessDeniedException {
-//        Participation participation = participationRepository
-//                .findByUserAndEvent(id, requestingUserId)
-//                .orElseThrow(() -> new ParticipationNotFoundException(id));
-        Participation participation = participationRepository
-                .findByEventAndUser(id, requestingUserId)
-                .orElseThrow(()-> new RuntimeException("Participation not found"));
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Event not found"));
 
-        if (participation.getRole()!=Role.ORGANIZER){
-            throw new AccessDeniedException();
+        if (!event.getOrganizer().getId().equals(requestingUserId)){
+            throw new RuntimeException("You are not allowed to delete this event");
         }
-        eventRepository.deleteById(id);
+
+        eventRepository.delete(event);
     }
 
 }

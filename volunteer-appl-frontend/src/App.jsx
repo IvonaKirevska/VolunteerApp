@@ -10,22 +10,28 @@ import Register from "./pages/Register.jsx";
 import AddEvent from "./pages/AddEvent.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import PrivateRoute from "./PrivateRoute.jsx";
+import EditEvent from "./pages/EditEvent.jsx";
+import Home from "./pages/Home.jsx";
+import Layout from "./components/Layout.jsx";
 
 function App() {
     return (
         <Router>
             <Navbar />
                 <Routes>
+                    <Route element={<Layout/>}>
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/register" element={<Register />} />
                     <Route path="/test" element={<TestConnection/>}/>
                     <Route
                         path="/"
-                        element={<h1>Welcome to Volunteer-Event App</h1>}
+                        element={<Home/>}
                     />
                     <Route path="/events" element={<PrivateRoute><Events/></PrivateRoute>}/>
                     <Route path="/add-event" element={<PrivateRoute><AddEvent/></PrivateRoute>}/>
                     <Route path="/events/:id" element={<EventDetails />} />
+                    <Route path="/events/:id/edit" element={<EditEvent />} />
+                </Route>
                 </Routes>
         </Router>
     );

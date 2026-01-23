@@ -1,0 +1,20 @@
+.home-container {
+    margin-top: 20px;
+    height: 87vh;
+    background-image: url("/volunteer.png");
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-container h1 {
+    width: 1600px;
+    color: white;
+    font-size: 3rem;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 40px;
+    border-radius: 12px;
+}
