@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import api from "../axios/axios";
 import "./EventDetails.css";
 import {useNavigate} from "react-router-dom";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 
 export default function EventDetails() {
     const {id} = useParams();
@@ -12,11 +13,10 @@ export default function EventDetails() {
     const [participants, setParticipants] = useState([]);
     const loggedUser=localStorage.getItem("username");
     const navigate = useNavigate();
+    const [showLeaveModal, setShowLeaveModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleLeave = async (eventId) => {
-        if (!window.confirm("Are you sure you want to leave this event?")) {
-            return;
-        }
         try {
             await api.delete(
                 `/participations/${eventId}/leave`,
@@ -33,16 +33,12 @@ export default function EventDetails() {
     };
 
     const handleDelete=async (eventId) =>{
-        if (!window.confirm("Are you sure you want to delete this event?")) return;
-
         try{
             await api.delete(`events/delete/${eventId}`,{
                 headers: {Authorization: `Bearer ${localStorage.getItem("token")}`}
             })
-            alert("Event deleted successfully");
             navigate("/events");
         }catch (err){
-            console.error(err);
             alert(err.response?.data || "Failed to delete event");
         }
     }
@@ -95,7 +91,7 @@ export default function EventDetails() {
 
 
             {!(event.organizerName === loggedUser)&&(
-            <button className="leave-btn" onClick={() => handleLeave(event.id)}>Leave Event</button>
+            <button className="leave-btn" onClick={() => setShowLeaveModal(true)}>Leave Event</button>
             )}
             {event.organizerName ===loggedUser && (
                 <Link to={`/events/${event.id}/edit`}>
@@ -104,9 +100,26 @@ export default function EventDetails() {
             )}
 
             {event.organizerName===loggedUser&&(
-                <button className="delete-btn" onClick={() => handleDelete(event.id)}>Delete Event</button>
+                <button className="delete-btn" onClick={() => setShowDeleteModal(true)}>Delete Event</button>
             )}
 
+            <ConfirmModal
+                show={showLeaveModal}
+                title="Leave Event"
+                message="Are you sure you want to leave this event?"
+                confirmText="Leave"
+                onCancel={()=>setShowLeaveModal(false)}
+                onConfirm={() => handleLeave(event.id)}
+            />
+
+            <ConfirmModal
+                show={showDeleteModal}
+                title="Delete Event"
+                message="Are you sure you want to delete this event?"
+                confirmText="Delete"
+                onCancel={()=>setShowDeleteModal(false)}
+                onConfirm={() => handleDelete(event.id)}
+            />
         </div>
 
     );

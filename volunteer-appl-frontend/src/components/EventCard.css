@@ -4,11 +4,11 @@
     padding: 20px;
     margin: 15px 0;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease;
+    transition: margin-top 0.2s ease;
 }
 
 .event-card:hover {
-    transform: translateY(-5px);
+    margin-top: 10px;
 }
 
 .event-card h3 {

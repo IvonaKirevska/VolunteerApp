@@ -1,20 +1,22 @@
 import "./EventCard.css";
 import api from "../axios/axios";
 import {useNavigate} from "react-router-dom"
+import {useState} from "react";
+import ConfirmModal from "./ConfirmModal.jsx";
 
 export default function EventCard({event}){
 
     const navigate = useNavigate();
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleApply = async (eventId) => {
-        console.log("Token:", localStorage.getItem("token"));
         try {
             await api.post(`/participations/${eventId}/join`, {}, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             });
-            alert("Successfully applied!");
+            setShowSuccess(true);
         } catch (err) {
-            alert(err.response?.data || "Failed to apply");
+           console.log(err);
         }
     };
 
@@ -37,6 +39,14 @@ export default function EventCard({event}){
 
             <button className="apply-btn" onClick={()=>handleApply(event.id)}>Apply</button>
             <button className="details-btn" onClick={goToDetails}>Details</button>
+
+            <ConfirmModal
+                show={showSuccess}
+                title="Success"
+                message="Successfully applied to the event!"
+                type="success"
+                onCancel={()=>setShowSuccess(false)}
+            />
         </div>
     );
 }
